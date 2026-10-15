@@ -1,0 +1,112 @@
+# Inlet and outlet pipe temperatures from two 10 kOhm NTC thermistors.
+# Pin defaults are for the Seeed Studio XIAO ESP32-C6.
+#
+# Circuit, one per probe:
+#
+#   $ntc_power_pin ---[ fixed $ntc_series_resistor ]---+---[ NTC ]--- GND
+#                                                      |
+#                                                  ADC pin
+#
+# The fixed resistor sits on the supply side and the NTC on the ground side,
+# which is the DOWNSTREAM configuration of the resistance sensor. The dividers
+# are powered from a GPIO only while sampling, so they draw nothing between
+# readings and the probes do not self-heat. An optional 100 nF capacitor from
+# each ADC pin to GND steadies the reading.
+#
+# Calibration: take b_constant from the probe datasheet (3950 is the usual
+# value for the common 10 k waterproof probes; 3435 and 3590 also exist).
+# Measure the fixed resistors with a meter and put the measured value in
+# ntc_series_resistor; a 1 % error there is a 1 % error in the result.
+
+substitutions:
+  ntc_inlet_pin: GPIO1        # XIAO D1 (ADC1)
+  ntc_outlet_pin: GPIO0       # XIAO D0 (ADC1)
+  ntc_power_pin: GPIO21       # XIAO D3, feeds the top of both dividers
+  ntc_series_resistor: 10kOhm # measured value of the fixed resistors
+  ntc_b: "3950"
+  ntc_r: 10kOhm
+  ntc_t: 25°C
+  ntc_update_interval: 10s
+
+switch:
+  - platform: gpio
+    id: ntc_vcc
+    pin: $ntc_power_pin
+    internal: true
+    restore_mode: ALWAYS_OFF
+
+interval:
+  - interval: $ntc_update_interval
+    then:
+      - switch.turn_on: ntc_vcc
+      - delay: 20ms
+      - component.update: ntc_inlet_v
+      - component.update: ntc_outlet_v
+      - switch.turn_off: ntc_vcc
+
+sensor:
+  - platform: adc
+    id: ntc_inlet_v
+    pin: $ntc_inlet_pin
+    attenuation: auto
+    update_interval: never
+  - platform: adc
+    id: ntc_outlet_v
+    pin: $ntc_outlet_pin
+    attenuation: auto
+    update_interval: never
+
+  - platform: resistance
+    id: ntc_inlet_r
+    sensor: ntc_inlet_v
+    configuration: DOWNSTREAM
+    resistor: $ntc_series_resistor
+  - platform: resistance
+    id: ntc_outlet_r
+    sensor: ntc_outlet_v
+    configuration: DOWNSTREAM
+    resistor: $ntc_series_resistor
+
+  - platform: ntc
+    id: inlet_temperature
+    name: "Inlet Temperature"
+    sensor: ntc_inlet_r
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    calibration:
+      b_constant: $ntc_b
+      reference_temperature: $ntc_t
+      reference_resistance: $ntc_r
+    filters:
+      - exponential_moving_average:
+          alpha: 0.3
+          send_every: 1
+  - platform: ntc
+    id: outlet_temperature
+    name: "Outlet Temperature"
+    sensor: ntc_outlet_r
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    calibration:
+      b_constant: $ntc_b
+      reference_temperature: $ntc_t
+      reference_resistance: $ntc_r
+    filters:
+      - exponential_moving_average:
+          alpha: 0.3
+          send_every: 1
+
+  # Outlet minus inlet. Positive while hot water is being drawn.
+  - platform: template
+    name: "Inlet to Outlet Rise"
+    unit_of_measurement: "°C"
+    device_class: temperature
+    state_class: measurement
+    accuracy_decimals: 1
+    update_interval: $ntc_update_interval
+    lambda: |-
+      if (std::isnan(id(inlet_temperature).state) || std::isnan(id(outlet_temperature).state))
+        return NAN;
+      return id(outlet_temperature).state - id(inlet_temperature).state;

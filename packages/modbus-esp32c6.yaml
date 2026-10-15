@@ -1,0 +1,58 @@
+# UART and Modbus setup for the valve's COM port on an ESP32-C6.
+# Pin defaults are for the Seeed Studio XIAO ESP32-C6. Override the
+# substitutions in your device YAML for other boards.
+#
+# Wiring (valve COM port pins, left to right on the PCB: RX, TX, GND):
+#   valve RX  <- $uart_tx   (XIAO D6 / GPIO16)
+#   valve TX  -> $uart_rx   (XIAO D7 / GPIO17)
+#   valve GND -- GND
+# Direct connection, 3.3 V logic, no extra parts.
+
+substitutions:
+  uart_tx: GPIO16        # XIAO D6, to valve RX
+  uart_rx: GPIO17        # XIAO D7, from valve TX
+  uart_dummy_tx: GPIO18  # XIAO D10, must be a free pin, leave unconnected
+  modbus_id: modbus1
+
+external_components:
+  - source: github://rousslabs/ESPHomeWaterHeaterReader_ESP32C6@main
+    components: [ irda_uart ]
+    refresh: 1d
+
+# IrDA mode on these UARTs is half duplex: a UART is either receiving or
+# transmitting. Two UARTs are used so the link is fully asynchronous. Bytes the
+# Modbus component writes to rx_uart are forwarded to tx_uart by the debug hook.
+# The ESP32-C6 has two high-power UARTs; the logger uses USB_SERIAL_JTAG by
+# default, so both are free.
+uart:
+  - id: rx_uart
+    tx_pin: $uart_dummy_tx
+    rx_pin: $uart_rx
+    baud_rate: 2400
+    debug:
+      direction: TX
+      after:
+        timeout: 1ms
+      sequence:
+        - lambda: |-
+            if (!bytes.empty())
+              id(tx_uart).write_array(bytes.data(), bytes.size());
+
+  - id: tx_uart
+    tx_pin: $uart_tx
+    baud_rate: 2400
+    debug:
+      direction: TX
+      after:
+        timeout: 1ms
+
+irda_uart:
+  - uart_id: rx_uart
+    tx_en: false
+  - uart_id: tx_uart
+    tx_en: true
+    invert: true
+
+modbus:
+  uart_id: rx_uart
+  id: $modbus_id

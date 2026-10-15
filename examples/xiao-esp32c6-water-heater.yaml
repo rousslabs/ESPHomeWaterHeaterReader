@@ -1,0 +1,74 @@
+# Seeed Studio XIAO ESP32-C6 reading a Honeywell/Resideo WV8840 water heater
+# controller, with inlet and outlet NTC thermistors.
+#
+# Paste this over the YAML that ESPHome Device Builder generates for a new
+# ESP32-C6 device, keeping the api: and ota: blocks it generated.
+#
+# Wiring (XIAO pin / GPIO):
+#   valve RX   <- D6  / GPIO16
+#   valve TX   -> D7  / GPIO17
+#   valve GND  -- GND
+#   NTC inlet  divider on D1 / GPIO1, powered from D3 / GPIO21
+#   NTC outlet divider on D0 / GPIO0, powered from D3 / GPIO21
+#   D10 / GPIO18 is used as a dummy UART pin; leave it unconnected.
+
+substitutions:
+  name: water-heater
+  friendly_name: Water Heater
+
+esphome:
+  name: $name
+  friendly_name: $friendly_name
+
+esp32:
+  variant: esp32c6
+  framework:
+    type: esp-idf
+
+logger:
+
+api:
+  encryption:
+    key: "PASTE_KEY_FROM_DEVICE_BUILDER"
+
+ota:
+  - platform: esphome
+    password: "PASTE_PASSWORD_FROM_DEVICE_BUILDER"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Water-Heater Fallback"
+
+captive_portal:
+
+packages:
+  reader:
+    url: https://github.com/rousslabs/ESPHomeWaterHeaterReader_ESP32C6
+    ref: main
+    refresh: 1d
+    files:
+      - packages/modbus-esp32c6.yaml      # UART, IrDA and Modbus for the C6
+      - packages/wv8840c-modbus.yaml      # valve registers, sensors, controls
+      - packages/ntc-inlet-outlet.yaml    # remove this line if no thermistors
+
+sensor:
+  - platform: uptime
+    name: "Uptime"
+    entity_category: diagnostic
+  - platform: wifi_signal
+    name: "WiFi Signal"
+    update_interval: 60s
+    entity_category: diagnostic
+
+button:
+  - platform: restart
+    name: "Restart"
+    entity_category: diagnostic
+
+# XIAO user LED. Remove if it behaves backwards on your board.
+status_led:
+  pin:
+    number: GPIO15
+    inverted: true

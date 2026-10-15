@@ -20,10 +20,10 @@ modbus_controller:
           id(heat_cycles).offset = 0;
           id(status).publish_state("Offline");
 - id: modbus_device_slow
-    address: 0x7f
-    modbus_id: $modbus_id
-    update_interval: 15min
-    max_cmd_retries: 4
+  address: 0x7f
+  modbus_id: $modbus_id
+  update_interval: 15min
+  max_cmd_retries: 4
 
 sensor:
 - platform: modbus_controller
