@@ -88,6 +88,10 @@ Thermistor divider, one per probe: the supply pin to a fixed 10 kOhm resistor,
 then to the ADC pin, then through the NTC to GND. Optional 100 nF from the ADC
 pin to GND. The supply pin is switched on only while sampling.
 
+![Thermistor schematic](docs/thermistor-schematic.svg)
+
+([SVG](docs/thermistor-schematic.svg), [PNG](docs/thermistor-schematic.png))
+
 ### Antenna
 
 The XIAO ESP32-C6 has an onboard ceramic antenna and a u.FL socket, selected by

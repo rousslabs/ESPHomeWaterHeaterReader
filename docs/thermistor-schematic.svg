@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="540" viewBox="0 0 780 540" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <rect width="780" height="540" fill="#ffffff"/>
+  <text x="40" y="36" font-size="17" font-weight="bold" fill="#111">Inlet and outlet thermistors, Seeed XIAO ESP32-C6</text>
+  <text x="40" y="54" fill="#555">Two identical voltage dividers. Pins drawn in schematic order, not board order.</text>
+
+  <!-- Board -->
+  <rect x="40" y="80" width="160" height="340" rx="8" fill="#f3f4f6" stroke="#111" stroke-width="1.5"/>
+  <text x="120" y="104" text-anchor="middle" font-weight="bold" fill="#111">XIAO ESP32-C6</text>
+  <!-- pin stubs -->
+  <g stroke="#111" stroke-width="2">
+    <line x1="200" y1="130" x2="230" y2="130"/>
+    <line x1="200" y1="170" x2="230" y2="170"/>
+    <line x1="200" y1="330" x2="230" y2="330"/>
+    <line x1="200" y1="410" x2="230" y2="410"/>
+  </g>
+  <g text-anchor="end" fill="#111">
+    <text x="192" y="134">D1 (GPIO1)</text>
+    <text x="192" y="174">D3 (GPIO21)</text>
+    <text x="192" y="334">D0 (GPIO0)</text>
+    <text x="192" y="414">GND</text>
+  </g>
+  <g fill="#555" font-size="11">
+    <text x="48" y="146">ADC, inlet</text>
+    <text x="48" y="186">divider supply</text>
+    <text x="48" y="346">ADC, outlet</text>
+  </g>
+
+  <!-- Supply bus from D3 -->
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="230" y1="170" x2="260" y2="170"/>
+    <line x1="260" y1="170" x2="260" y2="290"/>
+    <line x1="260" y1="170" x2="300" y2="170"/>
+    <line x1="260" y1="290" x2="300" y2="290"/>
+  </g>
+  <circle cx="260" cy="170" r="3.5" fill="#111"/>
+
+  <!-- Row 1: inlet, y=170 -->
+  <rect x="300" y="158" width="60" height="24" fill="#fff" stroke="#111" stroke-width="2"/>
+  <text x="330" y="150" text-anchor="middle" fill="#111">R1  10 kΩ</text>
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="360" y1="170" x2="440" y2="170"/>
+    <rect x="440" y="158" width="60" height="24" fill="#fff"/>
+    <line x1="430" y1="190" x2="512" y2="150"/>
+    <line x1="430" y1="190" x2="441" y2="190"/>
+    <line x1="500" y1="170" x2="580" y2="170"/>
+  </g>
+  <text x="470" y="210" text-anchor="middle" fill="#111">NTC1 inlet, 10 kΩ</text>
+  <circle cx="400" cy="170" r="3.5" fill="#111"/>
+  <!-- ADC wire row 1: node up and left to D1 -->
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="400" y1="170" x2="400" y2="130"/>
+    <line x1="400" y1="130" x2="230" y2="130"/>
+  </g>
+  <!-- C1 optional, node to GND bus -->
+  <g stroke="#555" stroke-width="2" fill="none" stroke-dasharray="5 4">
+    <line x1="400" y1="170" x2="400" y2="230"/>
+    <line x1="400" y1="230" x2="560" y2="230"/>
+    <line x1="580" y1="230" x2="571" y2="230"/>
+  </g>
+  <g stroke="#555" stroke-width="2.5">
+    <line x1="560" y1="220" x2="560" y2="240"/>
+    <line x1="571" y1="220" x2="571" y2="240"/>
+  </g>
+  <text x="440" y="250" fill="#555">C1  100 nF, optional</text>
+  <circle cx="580" cy="230" r="3.5" fill="#111"/>
+
+  <!-- Row 2: outlet, y=290 -->
+  <rect x="300" y="278" width="60" height="24" fill="#fff" stroke="#111" stroke-width="2"/>
+  <text x="330" y="270" text-anchor="middle" fill="#111">R2  10 kΩ</text>
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="360" y1="290" x2="440" y2="290"/>
+    <rect x="440" y="278" width="60" height="24" fill="#fff"/>
+    <line x1="430" y1="310" x2="512" y2="270"/>
+    <line x1="430" y1="310" x2="441" y2="310"/>
+    <line x1="500" y1="290" x2="580" y2="290"/>
+  </g>
+  <text x="470" y="324" text-anchor="middle" fill="#111">NTC2 outlet, 10 kΩ</text>
+  <circle cx="400" cy="290" r="3.5" fill="#111"/>
+  <circle cx="580" cy="290" r="3.5" fill="#111"/>
+  <!-- ADC wire row 2: node down and left to D0 -->
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="400" y1="290" x2="400" y2="330"/>
+    <line x1="400" y1="330" x2="230" y2="330"/>
+  </g>
+  <circle cx="400" cy="330" r="3.5" fill="#111"/>
+  <!-- C2 optional -->
+  <g stroke="#555" stroke-width="2" fill="none" stroke-dasharray="5 4">
+    <line x1="400" y1="330" x2="400" y2="360"/>
+    <line x1="400" y1="360" x2="560" y2="360"/>
+    <line x1="580" y1="360" x2="571" y2="360"/>
+  </g>
+  <g stroke="#555" stroke-width="2.5">
+    <line x1="560" y1="350" x2="560" y2="370"/>
+    <line x1="571" y1="350" x2="571" y2="370"/>
+  </g>
+  <text x="440" y="380" fill="#555">C2  100 nF, optional</text>
+  <circle cx="580" cy="360" r="3.5" fill="#111"/>
+
+  <!-- GND bus -->
+  <g stroke="#111" stroke-width="2" fill="none">
+    <line x1="580" y1="170" x2="580" y2="410"/>
+    <line x1="580" y1="410" x2="230" y2="410"/>
+  </g>
+  <text x="600" y="294" fill="#111">GND bus</text>
+
+  <!-- Notes -->
+  <g fill="#111">
+    <text x="40" y="452" font-weight="bold">Notes</text>
+    <text x="40" y="472">R1, R2: fixed 10 kΩ. Measure each with a meter and put the value in ntc_series_resistor (one value for both).</text>
+    <text x="40" y="490">NTC1, NTC2: 10 kΩ at 25 °C probes. Take B from the probe listing (ntc_b, usually 3950). No polarity.</text>
+    <text x="40" y="508">D3 is driven high only for 20 ms per sample, so the dividers draw nothing between readings.</text>
+    <text x="40" y="526">Adafruit ESP32-C6 Feather: D3 → D9 (GPIO7), D1 → A0 (GPIO1), D0 → A5 (GPIO2).</text>
+  </g>
+</svg>
