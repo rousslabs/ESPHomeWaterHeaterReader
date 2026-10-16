@@ -87,17 +87,32 @@ Feather has an onboard antenna only.
    Feather ESP32-C6) if it is listed; otherwise choose the ESP32-C6 family. The
    board package sets the exact board anyway, so this only affects the file the
    wizard generates. Skip the install step.
-2. Open the device's **Edit** view. Copy the generated `api:` and `ota:` blocks
-   aside; they hold the device's key and password.
-3. Replace the whole file with the example for your board and paste your two
-   blocks back over the placeholders:
-   - [examples/xiao-esp32c6-water-heater.yaml](examples/xiao-esp32c6-water-heater.yaml)
-   - [examples/feather-esp32c6-water-heater.yaml](examples/feather-esp32c6-water-heater.yaml)
-4. Remove the `ntc-inlet-outlet.yaml` line if you have no thermistors.
-5. **Install**. The first flash must be over USB (**Plug into this computer**
+2. Open the device's **Edit** view and copy the generated API encryption key
+   and OTA password somewhere; the next step moves them into `secrets.yaml`.
+3. Open **Secrets** (top-right menu in Device Builder) and make sure these four
+   entries exist. The wizard normally writes the first two; add the other two
+   with the values from step 2, or any random values for a new device:
+
+   ```yaml
+   wifi_ssid: "your network"
+   wifi_password: "your wifi password"
+   api_key: "the 32-byte base64 key from the generated config"
+   ota_password: "the password from the generated config"
+   ```
+
+4. Back in **Edit**, replace the whole file with the example for your board:
+   - [examples/xiao-esp32c6-water-heater-reader.yaml](examples/xiao-esp32c6-water-heater-reader.yaml)
+   - [examples/feather-esp32c6-water-heater-reader.yaml](examples/feather-esp32c6-water-heater-reader.yaml)
+
+   The device is called `water-heater-reader` ("Water Heater Reader" in Home
+   Assistant). Change `name` and `friendly_name` at the top if you want
+   something else.
+5. Remove the `ntc-inlet-outlet.yaml` line if you have no thermistors.
+6. **Install**. The first flash must be over USB (**Plug into this computer**
    in Chrome or Edge); later updates go over the air.
-6. Connect to the controller and watch the log. The **Model** text sensor should
-   fill in within a few seconds.
+7. Connect to the controller and watch the log. Logging is at DEBUG level, so
+   the Modbus traffic is visible. The **Model** text sensor should fill in
+   within a few seconds.
 
 The example pulls everything it needs from this repository through ESPHome's
 `packages:` mechanism, so there is nothing else to copy. Keep the board package

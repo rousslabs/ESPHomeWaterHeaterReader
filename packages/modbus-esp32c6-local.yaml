@@ -5,7 +5,7 @@
 # Expected layout inside the ESPHome config directory (/config/esphome):
 #
 #   /config/esphome/
-#     water-heater.yaml                         your device YAML
+#     water-heater-reader.yaml                  your device YAML
 #     ESPHomeWaterHeaterReader_ESP32C6/         this repository, copied in
 #       components/irda_uart/...
 #       packages/...

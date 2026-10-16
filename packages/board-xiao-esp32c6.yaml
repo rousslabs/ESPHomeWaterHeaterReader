@@ -37,6 +37,7 @@ esp32:
     type: esp-idf
 
 logger:
+  level: DEBUG
   # USB_SERIAL_JTAG by default on the C6, leaving UART0 and UART1 free.
 
 status_led:
