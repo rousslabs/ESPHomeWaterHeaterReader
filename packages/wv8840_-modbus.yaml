@@ -121,7 +121,7 @@ sensor:
     - multiply: 0.00146627565
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Temperature Setting"
+  name: "Set Point"
   id: temperature_setting
   register_type: read
   device_class: temperature
@@ -611,15 +611,15 @@ number:
     value_type: U_WORD
     id: raw_temperature_hysteresis_override
   - platform: template
-    step: 0.1
+    step: 1
     optimistic: True
-    name: "Setback Temperature"
+    name: "Vacation Temperature"
     id: setback_temperature
     device_class: temperature
     unit_of_measurement: "°F"
     mode: SLIDER
     restore_value: True
-    initial_value: 155.0
+    initial_value: 155
     min_value: 55.0
     max_value: 155.0
     on_value:
@@ -629,17 +629,17 @@ number:
           value: !lambda |-
             return id(enable_setback).state ? (int) round(x * 10.0) : 0x7fff;
   - platform: template
-    name: "Temperature Hysteresis Override"
+    name: "Hysteresis Range"
     id: temperature_hysteresis_override
     device_class: temperature_delta
     unit_of_measurement: "°F"
     mode: SLIDER
     min_value: 0.0
     max_value: 50.0
-    step: 0.1
+    step: 1
     optimistic: True
     restore_value: True
-    initial_value: 10.0
+    initial_value: 10
     on_value:
       then:
         number.set:
@@ -657,7 +657,7 @@ switch:
     bitmask: 0x0040
   - platform: template
     optimistic: True
-    name: "Enable Setback Temperature"
+    name: "Vacation Mode"
     id: enable_setback
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_off:
@@ -673,7 +673,7 @@ switch:
             return (int) round(id(setback_temperature).state * 10.0);
   - platform: template
     optimistic: True
-    name: "Override Temperature Hysteresis"
+    name: "Hysteresis Override"
     id: override_temperature_hysteresis
     restore_mode: RESTORE_DEFAULT_OFF
     on_turn_off:
@@ -690,7 +690,7 @@ switch:
 
 water_heater:
   - platform: template
-    name: "Water Heater"
+    name: "Target Temperature"
     id: gas_water_heater
     current_temperature: !lambda 'return (id(tank_temperature).state - 32.0) * (5.0/9.0);'
     target_temperature: !lambda 'return (id(temperature_setting).state - 32.0) * (5.0/9.0);'
@@ -699,7 +699,7 @@ water_heater:
     visual:
       min_temperature: 12.8
       max_temperature: 68.3
-      target_temperature_step: 0.1
+      target_temperature_step: 0.5556   # 1 °F; ESPHome takes this in °C
     set_action:
       - lambda: |-
           ESP_LOGI("water_heater", "New target temperature: %.1f", id(gas_water_heater).get_target_temperature() );
