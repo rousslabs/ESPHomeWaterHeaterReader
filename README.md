@@ -1,8 +1,13 @@
 # ESPHome Water Heater Reader for the ESP32-C6
 
-Read a Honeywell / Resideo WV8840 or WV8860 gas water heater controller into
+Read a Honeywell / Resideo WV8840_ or WV8860 gas water heater controller into
 Home Assistant with an ESP32-C6 running ESPHome. Optional inlet and outlet pipe
 thermistors show when hot water is being drawn.
+
+"WV8840_" stands for any suffix: the A, B and C variants appear to differ only
+in which water heater maker they were built for and their outlet pressure, not
+in their electronics or serial port. Upstream confirmed the C; this project is
+testing an A.
 
 This repository is a fork of [russdill/resideo](https://github.com/russdill/resideo),
 which reverse-engineered the controller's serial port and wrote the ESPHome
@@ -14,7 +19,8 @@ support. That project targets the ESP32-C3. This fork:
   **Adafruit ESP32-C6 Feather**;
 - adds an **inlet / outlet NTC thermistor** package;
 - keeps everything from upstream, including the protocol description in
-  [PROTOCOL.md](PROTOCOL.md) and the original ESP32-C3 example.
+  [PROTOCOL.md](PROTOCOL.md) and the original ESP32-C3 example. Upstream's
+  `wv8840c-modbus.yaml` is carried here as `wv8840_-modbus.yaml`.
 
 ## Status
 
@@ -39,7 +45,7 @@ From the controller: tank temperature, temperature setting and dial position,
 heating / idle status, fault flags, heating cycle count, a `water_heater`
 entity, and a setback (vacation) temperature you can write. Many diagnostic
 registers are included but disabled by default. See
-[packages/wv8840c-modbus.yaml](packages/wv8840c-modbus.yaml).
+[packages/wv8840_-modbus.yaml](packages/wv8840_-modbus.yaml).
 
 From the thermistor package: inlet temperature, outlet temperature and the
 rise between them.
@@ -137,7 +143,7 @@ files yourself.
    ```yaml
    packages:
      modbus: !include ESPHomeWaterHeaterReader_ESP32C6/packages/modbus-esp32c6-local.yaml
-     valve: !include ESPHomeWaterHeaterReader_ESP32C6/packages/wv8840c-modbus.yaml
+     valve: !include ESPHomeWaterHeaterReader_ESP32C6/packages/wv8840_-modbus.yaml
      ntc: !include ESPHomeWaterHeaterReader_ESP32C6/packages/ntc-inlet-outlet.yaml
      board: !include ESPHomeWaterHeaterReader_ESP32C6/packages/board-xiao-esp32c6.yaml
    ```

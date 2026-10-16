@@ -1,4 +1,4 @@
-# Seeed Studio XIAO ESP32-C6 reading a Honeywell/Resideo WV8840 water heater
+# Seeed Studio XIAO ESP32-C6 reading a Honeywell/Resideo WV8840_ water heater
 # controller, with inlet and outlet NTC thermistors. Onboard antenna.
 #
 # Paste this over the YAML that ESPHome Device Builder generates for a new
@@ -47,7 +47,7 @@ packages:
     refresh: 1d
     files:
       - packages/modbus-esp32c6.yaml              # UART, IrDA and Modbus for the C6
-      - packages/wv8840c-modbus.yaml              # valve registers, sensors, controls
+      - packages/wv8840_-modbus.yaml              # valve registers, sensors, controls
       - packages/ntc-inlet-outlet.yaml            # remove if no thermistors
       - packages/board-xiao-esp32c6.yaml          # board, pins, LED (keep last)
       # - packages/xiao-esp32c6-external-antenna.yaml   # only with a u.FL antenna fitted
