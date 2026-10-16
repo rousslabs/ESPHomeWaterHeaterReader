@@ -19,7 +19,10 @@ substitutions:
 external_components:
   - source: github://rousslabs/ESPHomeWaterHeaterReader_ESP32C6@main
     components: [ irda_uart ]
-    refresh: 1d
+    # Fetched on every build. The refresh: setting on the packages: block in a
+    # device YAML does not reach this entry, and a cached copy of the component
+    # has already caused confusion once.
+    refresh: 0s
 
 # IrDA mode on these UARTs is half duplex: a UART is either receiving or
 # transmitting. Two UARTs are used so the link is fully asynchronous. Bytes the
