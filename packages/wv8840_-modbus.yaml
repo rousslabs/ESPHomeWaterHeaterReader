@@ -7,7 +7,6 @@ modbus_controller:
   modbus_id: $modbus_id
   update_interval: 10s
   setup_priority: -10
-  turnaround_time: 600ms
   max_cmd_retries: 4
   on_offline:
     then:

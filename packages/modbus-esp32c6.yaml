@@ -57,3 +57,6 @@ irda_uart:
 modbus:
   uart_id: rx_uart
   id: $modbus_id
+  # Pause after each reply before the next command. The valve times out with
+  # shorter gaps (reported in the project thread). 600 ms is also the default.
+  turnaround_time: 600ms
