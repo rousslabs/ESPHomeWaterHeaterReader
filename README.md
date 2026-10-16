@@ -6,8 +6,8 @@ thermistors show when hot water is being drawn.
 
 "WV8840_" stands for any suffix: the A, B and C variants appear to differ only
 in which water heater maker they were built for and their outlet pressure, not
-in their electronics or serial port. Upstream confirmed the C; this project is
-testing an A.
+in their electronics or serial port. Upstream confirmed the C; this project
+confirmed an A (WV8840A1057).
 
 This repository is a fork of [russdill/resideo](https://github.com/russdill/resideo),
 which reverse-engineered the controller's serial port and wrote the ESPHome
@@ -27,10 +27,10 @@ support. That project targets the ESP32-C3. This fork:
 | Item | State |
 |---|---|
 | ESP32-C3, WV8840C and WV8860 | Working upstream |
-| ESP32-C6 `irda_uart` patch | Written against the ESP-IDF headers; **not yet verified on hardware** |
-| XIAO ESP32-C6 | First test board |
-| Adafruit ESP32-C6 Feather | Second test board, for the power-efficiency comparison |
-| WV8840A1057 (Bradford White ICON) | Being tested now |
+| ESP32-C6 `irda_uart` patch | **Working** on the XIAO ESP32-C6 (2026-10-16) |
+| XIAO ESP32-C6 | **Reading the controller** |
+| Adafruit ESP32-C6 Feather | Second test board, for the power-efficiency comparison; not yet tried |
+| WV8840A1057 (Bradford White ICON) | **Confirmed**: answers on the same protocol as the C |
 | NTC package | Written; not yet verified |
 | Battery operation | Not yet; the first build is USB powered |
 
@@ -60,7 +60,15 @@ rise between them.
 
 The COM port is on the underside of the controller board. Pins, left to right
 on the PCB: **RX, TX, GND**. 3.3 V logic. Connectors people have used: Molex
-093050-0001, TE 1-2391423-3, or the original Lumberg RAST 2.5 3512 03.
+093050-0001 (DigiKey 23-0930500001-ND), TE 1-2391423-3, or the original
+Lumberg RAST 2.5 3512 03.
+
+**Connector warning.** The Molex 093050-0001 is not an exact fit. Seated at a
+slight angle it shorts RX to TX, and the symptom is exactly what a dead link
+looks like: requests go out, the controller's TX line shows activity on a
+meter, and nothing is ever received. If the controller stays "Offline", reseat
+the connector squarely before suspecting anything else. A meter between the
+two signal pins at the connector should read open, not a short.
 
 ### Wiring
 

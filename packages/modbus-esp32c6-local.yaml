@@ -18,7 +18,6 @@ substitutions:
   uart_rx: GPIO17        # XIAO D7, from valve TX
   uart_dummy_tx: GPIO18  # XIAO D10, must be a free pin, leave unconnected
   modbus_id: modbus1
-  irda_rx_invert: "false"   # set to "true" in your device YAML to try inverted RX
 
 external_components:
   - source:
@@ -32,19 +31,14 @@ uart:
     rx_pin: $uart_rx
     baud_rate: 2400
     debug:
-      direction: BOTH
+      direction: TX
       after:
         timeout: 1ms
       sequence:
-        # Outbound bytes are forwarded to the TX UART. Inbound bytes are logged
-        # as "<<<" so that even garbage from the valve is visible.
+        # Forward all outbound traffic to the TX UART
         - lambda: |-
-            if (direction == uart::UART_DIRECTION_TX) {
-              if (!bytes.empty())
-                id(tx_uart).write_array(bytes.data(), bytes.size());
-            } else {
-              UARTDebug::log_hex(direction, bytes, ':');
-            }
+            if (!bytes.empty())
+              id(tx_uart).write_array(bytes.data(), bytes.size());
 
   - id: tx_uart
     tx_pin: $uart_tx
@@ -57,7 +51,6 @@ uart:
 irda_uart:
   - uart_id: rx_uart
     tx_en: false
-    invert: $irda_rx_invert
   - uart_id: tx_uart
     tx_en: true
     invert: true
