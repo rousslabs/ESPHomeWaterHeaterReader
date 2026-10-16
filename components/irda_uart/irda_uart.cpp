@@ -14,9 +14,18 @@
 #include "irda_uart.h"
 #include "driver/uart.h"
 #include "soc/uart_reg.h"
+#include "esphome/core/log.h"
 
 namespace esphome {
 namespace irda_uart {
+
+static const char *const TAG = "irda_uart";
+
+#ifdef UART_CONF0_SYNC_REG
+#define IRDA_CONF0_REG(port) UART_CONF0_SYNC_REG(port)
+#else
+#define IRDA_CONF0_REG(port) UART_CONF0_REG(port)
+#endif
 
 void IrdaUart::setup() {
   uart_port_t port = (uart_port_t) this->uart_->get_hw_serial_number();
@@ -47,6 +56,20 @@ void IrdaUart::setup() {
     REG_CLR_BIT(UART_CONF0_REG(port), UART_IRDA_TX_EN);   // RX-only
   }
 #endif
+}
+
+void IrdaUart::dump_config() {
+  // Read the register back so the log shows what the hardware actually has.
+  uart_port_t port = (uart_port_t) this->uart_->get_hw_serial_number();
+  uint32_t conf0 = REG_READ(IRDA_CONF0_REG(port));
+  ESP_LOGCONFIG(TAG,
+                "IrDA UART%d: configured tx_en=%d invert=%d; hardware irda_en=%d "
+                "irda_tx_en=%d tx_inv=%d rx_inv=%d",
+                (int) port, (int) tx_en_, (int) invert_,
+                (int) ((conf0 & UART_IRDA_EN) != 0),
+                (int) ((conf0 & UART_IRDA_TX_EN) != 0),
+                (int) ((conf0 & UART_IRDA_TX_INV) != 0),
+                (int) ((conf0 & UART_IRDA_RX_INV) != 0));
 }
 
 }  // namespace irda_uart

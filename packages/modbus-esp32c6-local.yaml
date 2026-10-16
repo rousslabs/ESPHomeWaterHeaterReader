@@ -18,6 +18,7 @@ substitutions:
   uart_rx: GPIO17        # XIAO D7, from valve TX
   uart_dummy_tx: GPIO18  # XIAO D10, must be a free pin, leave unconnected
   modbus_id: modbus1
+  irda_rx_invert: "false"   # set to "true" in your device YAML to try inverted RX
 
 external_components:
   - source:
@@ -56,6 +57,7 @@ uart:
 irda_uart:
   - uart_id: rx_uart
     tx_en: false
+    invert: $irda_rx_invert
   - uart_id: tx_uart
     tx_en: true
     invert: true

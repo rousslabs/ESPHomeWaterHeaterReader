@@ -13,6 +13,7 @@ class IrdaUart : public Component {
   void set_tx_en(bool en) { tx_en_ = en; }
   void set_invert(bool inv) { invert_ = inv; }
   void setup() override;
+  void dump_config() override;
 
  private:
   uart::IDFUARTComponent *uart_{nullptr};
