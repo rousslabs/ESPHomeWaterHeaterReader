@@ -66,9 +66,11 @@ Lumberg RAST 2.5 3512 03.
 **Connector warning.** The Molex 093050-0001 is not an exact fit. Seated at a
 slight angle it shorts RX to TX, and the symptom is exactly what a dead link
 looks like: requests go out, the controller's TX line shows activity on a
-meter, and nothing is ever received. If the controller stays "Offline", reseat
-the connector squarely before suspecting anything else. A meter between the
-two signal pins at the connector should read open, not a short.
+meter, and nothing is ever received. The COM port sits in a small recess on
+the underside of the controller, so you cannot see whether the connector is
+square once it is in. If the controller stays "Offline", reseat the connector
+before suspecting anything else, and check with a meter that the RX and TX
+wires read open to each other at the ESP end. It took several attempts here.
 
 ### Wiring
 
@@ -220,6 +222,68 @@ a wake every few minutes; a Thread or sub-GHz radio may replace Wi-Fi later.
 Both boards have a lithium charger on board, and the Feather also carries a
 MAX17048 fuel gauge (not configured yet). Nothing about battery operation is in
 the packages yet.
+
+## References
+
+### This project and upstream
+
+- Upstream project, protocol work and ESPHome component: https://github.com/russdill/resideo
+- Upstream protocol description: https://github.com/russdill/resideo/blob/main/PROTOCOL.md
+  (carried here as [PROTOCOL.md](PROTOCOL.md))
+- Home Assistant community thread where the protocol was worked out and other
+  users report results: https://community.home-assistant.io/t/support-for-resideo-honeywell-gas-water-heater-valves/937901
+- Upstream issue on slashes in entity names: https://github.com/russdill/resideo/issues/3
+
+### The controller
+
+- Honeywell WV8840A teardown with scope captures of the COM port (2015):
+  https://www.venturii.net/blog/2015/09/07/honeywell-wv8840a-gas-valve/
+- Water heater monitoring and setback control notes on the WV8840 and the
+  EnviraCOM accessory bus: https://www.bloominglabs.org/index.php/Water_Heater_Monitoring_and_Setback_Control
+- Honeywell/Resideo WT8840 installation instructions (replacement for the
+  WV8840, shows the COM port and the accessory-module fault code):
+  https://fwwebbimage.fwwebb.com/ProductInfo/WT8840-Install.pdf
+- Earlier Raspberry Pi attempt at the same port: https://forums.raspberrypi.com/viewtopic.php?t=136314
+- Bradford White ICON accessory module and Rheem EcoNet notes (the
+  manufacturers' own readers, 24 VAC powered): https://github.com/homeassistant-projects/hass-honeywell-whc
+
+### Connectors
+
+- Molex 093050-0001, DigiKey 23-0930500001-ND: https://www.digikey.com/en/products/detail/molex/0930500001/5116920
+- TE 1-2391423-3: https://www.te.com/en/product-1-2391423-3.html
+- Lumberg RAST 2.5 series (original mating part 3512 03): https://www.lumberg.com/en/products/product/3512
+
+### Boards
+
+- Seeed Studio XIAO ESP32-C6 getting started (pinout, antenna switch, battery):
+  https://wiki.seeedstudio.com/xiao_esp32c6_getting_started/
+- Adafruit ESP32-C6 Feather pinouts: https://learn.adafruit.com/adafruit-esp32-c6-feather/pinouts
+- PlatformIO board definitions used by ESPHome:
+  https://github.com/pioarduino/platform-espressif32/blob/develop/boards/seeed_xiao_esp32c6.json and
+  https://github.com/pioarduino/platform-espressif32/blob/develop/boards/adafruit_feather_esp32c6.json
+
+### ESPHome
+
+- ESP32 platform (ESP-IDF is required for the C6): https://esphome.io/components/esp32/
+- UART bus, including the debug hook used to forward bytes: https://esphome.io/components/uart/
+- Modbus hub (`turnaround_time`): https://esphome.io/components/modbus/
+- Modbus controller: https://esphome.io/components/modbus_controller/
+- External components: https://esphome.io/components/external_components/
+- Packages (remote and local, merge rules): https://esphome.io/components/packages/
+- Logger (USB_SERIAL_JTAG default on the C6): https://esphome.io/components/logger/
+- ADC, resistance and NTC sensors for the thermistors: https://esphome.io/components/sensor/adc/,
+  https://esphome.io/components/sensor/resistance/, https://esphome.io/components/sensor/ntc/
+- Deep sleep (for the battery build): https://esphome.io/components/deep_sleep/
+- OpenThread and Zigbee on the C6 (radio options under consideration):
+  https://esphome.io/components/openthread/, https://esphome.io/components/zigbee/
+
+### ESP-IDF
+
+- UART register headers that differ between chips, the reason for the C6
+  patch: ESP32-C3 https://github.com/espressif/esp-idf/blob/master/components/soc/esp32c3/register/soc/uart_reg.h
+  and ESP32-C6 https://github.com/espressif/esp-idf/blob/master/components/soc/esp32c6/register/soc/uart_reg.h
+- ESP32-C6 UART low-level driver (`uart_ll_set_mode_irda`, `uart_ll_update`):
+  https://github.com/espressif/esp-idf/blob/master/components/hal/esp32c6/include/hal/uart_ll.h
 
 ## Credits and licence
 
