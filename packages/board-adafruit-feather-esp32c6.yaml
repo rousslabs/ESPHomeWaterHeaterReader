@@ -1,0 +1,43 @@
+# Board package: Adafruit ESP32-C6 Feather
+#
+#   Function                     Feather pin   GPIO
+#   Valve RX (our TX)            TX            GPIO16
+#   Valve TX (our RX)            RX            GPIO17
+#   Dummy UART TX, unconnected   D12           GPIO14
+#   NTC inlet divider            A0            GPIO1   (ADC1)
+#   NTC outlet divider           A5            GPIO2   (ADC1)
+#   NTC divider supply           D9            GPIO7
+#   Red LED (active high)        D13           GPIO15
+#   NeoPixel and Boot button     -             GPIO9   (not used)
+#   NeoPixel / STEMMA QT power   -             GPIO20  (not used; left low)
+#   I2C (MAX17048 fuel gauge)    SDA / SCL     GPIO19 / GPIO18 (not used yet)
+#
+# Antenna: onboard only.
+# Battery: JST jack for a 3.7 V lithium cell, charger and MAX17048 fuel gauge
+# on board. The fuel gauge is not configured here yet.
+#
+# The substitutions below override the XIAO defaults in modbus-esp32c6.yaml
+# and ntc-inlet-outlet.yaml. List this package AFTER those two in your
+# packages: block so these values win, or copy them into your device YAML,
+# where they always win.
+
+substitutions:
+  uart_tx: GPIO16
+  uart_rx: GPIO17
+  uart_dummy_tx: GPIO14
+  ntc_inlet_pin: GPIO1
+  ntc_outlet_pin: GPIO2
+  ntc_power_pin: GPIO7
+
+esp32:
+  board: adafruit_feather_esp32c6
+  variant: esp32c6
+  framework:
+    type: esp-idf
+
+logger:
+
+status_led:
+  pin:
+    number: GPIO15
+    inverted: false

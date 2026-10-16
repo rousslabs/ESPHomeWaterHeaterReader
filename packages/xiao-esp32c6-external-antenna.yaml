@@ -1,0 +1,24 @@
+# Optional: switch the Seeed XIAO ESP32-C6 to its u.FL external antenna.
+#
+# The XIAO has an RF switch. GPIO3 driven LOW enables control of the switch;
+# GPIO14 then selects the antenna: LOW = onboard ceramic (the power-on
+# default), HIGH = external u.FL connector. Both pins are set early in boot,
+# before Wi-Fi starts.
+#
+# Only add this package if an antenna is actually fitted to the u.FL socket.
+# Transmitting with no antenna connected can damage the radio.
+
+output:
+  - platform: gpio
+    id: xiao_rf_switch_enable
+    pin: GPIO3
+  - platform: gpio
+    id: xiao_antenna_select
+    pin: GPIO14
+
+esphome:
+  on_boot:
+    priority: 800
+    then:
+      - output.turn_off: xiao_rf_switch_enable   # LOW enables the RF switch
+      - output.turn_on: xiao_antenna_select      # HIGH selects the u.FL antenna

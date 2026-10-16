@@ -1,0 +1,59 @@
+# Same as modbus-esp32c6.yaml, but loads the irda_uart component from a local
+# copy of this repository instead of from GitHub. Use this when installing
+# without internet access to GitHub, or when changing the component.
+#
+# Expected layout inside the ESPHome config directory (/config/esphome):
+#
+#   /config/esphome/
+#     water-heater.yaml                         your device YAML
+#     ESPHomeWaterHeaterReader_ESP32C6/         this repository, copied in
+#       components/irda_uart/...
+#       packages/...
+#
+# The path below is relative to the directory holding your device YAML. If
+# you copied the repository somewhere else, change it.
+
+substitutions:
+  uart_tx: GPIO16        # XIAO D6, to valve RX
+  uart_rx: GPIO17        # XIAO D7, from valve TX
+  uart_dummy_tx: GPIO18  # XIAO D10, must be a free pin, leave unconnected
+  modbus_id: modbus1
+
+external_components:
+  - source:
+      type: local
+      path: ESPHomeWaterHeaterReader_ESP32C6/components
+    components: [ irda_uart ]
+
+uart:
+  - id: rx_uart
+    tx_pin: $uart_dummy_tx
+    rx_pin: $uart_rx
+    baud_rate: 2400
+    debug:
+      direction: TX
+      after:
+        timeout: 1ms
+      sequence:
+        - lambda: |-
+            if (!bytes.empty())
+              id(tx_uart).write_array(bytes.data(), bytes.size());
+
+  - id: tx_uart
+    tx_pin: $uart_tx
+    baud_rate: 2400
+    debug:
+      direction: TX
+      after:
+        timeout: 1ms
+
+irda_uart:
+  - uart_id: rx_uart
+    tx_en: false
+  - uart_id: tx_uart
+    tx_en: true
+    invert: true
+
+modbus:
+  uart_id: rx_uart
+  id: $modbus_id

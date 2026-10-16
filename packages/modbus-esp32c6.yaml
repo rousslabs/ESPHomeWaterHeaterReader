@@ -1,6 +1,7 @@
 # UART and Modbus setup for the valve's COM port on an ESP32-C6.
-# Pin defaults are for the Seeed Studio XIAO ESP32-C6. Override the
-# substitutions in your device YAML for other boards.
+# Pin defaults are for the Seeed Studio XIAO ESP32-C6. A board package listed
+# after this one (board-adafruit-feather-esp32c6.yaml, say) or a substitutions:
+# block in your device YAML overrides them.
 #
 # Wiring (valve COM port pins, left to right on the PCB: RX, TX, GND):
 #   valve RX  <- $uart_tx   (XIAO D6 / GPIO16)

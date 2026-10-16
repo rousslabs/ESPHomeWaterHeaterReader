@@ -1,8 +1,8 @@
 # Seeed Studio XIAO ESP32-C6 reading a Honeywell/Resideo WV8840 water heater
-# controller, with inlet and outlet NTC thermistors.
+# controller, with inlet and outlet NTC thermistors. Onboard antenna.
 #
 # Paste this over the YAML that ESPHome Device Builder generates for a new
-# ESP32-C6 device, keeping the api: and ota: blocks it generated.
+# device, keeping the api: and ota: blocks it generated.
 #
 # Wiring (XIAO pin / GPIO):
 #   valve RX   <- D6  / GPIO16
@@ -19,13 +19,6 @@ substitutions:
 esphome:
   name: $name
   friendly_name: $friendly_name
-
-esp32:
-  variant: esp32c6
-  framework:
-    type: esp-idf
-
-logger:
 
 api:
   encryption:
@@ -49,9 +42,11 @@ packages:
     ref: main
     refresh: 1d
     files:
-      - packages/modbus-esp32c6.yaml      # UART, IrDA and Modbus for the C6
-      - packages/wv8840c-modbus.yaml      # valve registers, sensors, controls
-      - packages/ntc-inlet-outlet.yaml    # remove this line if no thermistors
+      - packages/modbus-esp32c6.yaml              # UART, IrDA and Modbus for the C6
+      - packages/wv8840c-modbus.yaml              # valve registers, sensors, controls
+      - packages/ntc-inlet-outlet.yaml            # remove if no thermistors
+      - packages/board-xiao-esp32c6.yaml          # board, pins, LED (keep last)
+      # - packages/xiao-esp32c6-external-antenna.yaml   # only with a u.FL antenna fitted
 
 sensor:
   - platform: uptime
@@ -66,9 +61,3 @@ button:
   - platform: restart
     name: "Restart"
     entity_category: diagnostic
-
-# XIAO user LED. Remove if it behaves backwards on your board.
-status_led:
-  pin:
-    number: GPIO15
-    inverted: true

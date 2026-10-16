@@ -10,7 +10,8 @@ support. That project targets the ESP32-C3. This fork:
 
 - fixes the `irda_uart` component so it compiles and works on the **ESP32-C6**
   (the C6 moved the UART config register and needs a register-update strobe);
-- adds a ready-made package for the **Seeed Studio XIAO ESP32-C6**;
+- adds ready-made packages for the **Seeed Studio XIAO ESP32-C6** and the
+  **Adafruit ESP32-C6 Feather**;
 - adds an **inlet / outlet NTC thermistor** package;
 - keeps everything from upstream, including the protocol description in
   [PROTOCOL.md](PROTOCOL.md) and the original ESP32-C3 example.
@@ -21,6 +22,8 @@ support. That project targets the ESP32-C3. This fork:
 |---|---|
 | ESP32-C3, WV8840C and WV8860 | Working upstream |
 | ESP32-C6 `irda_uart` patch | Written against the ESP-IDF headers; **not yet verified on hardware** |
+| XIAO ESP32-C6 | First test board |
+| Adafruit ESP32-C6 Feather | Second test board, for the power-efficiency comparison |
 | WV8840A1057 (Bradford White ICON) | Being tested now |
 | NTC package | Written; not yet verified |
 | Battery operation | Not yet; the first build is USB powered |
@@ -43,7 +46,8 @@ rise between them.
 
 ## Hardware
 
-- Seeed Studio XIAO ESP32-C6 (other ESP32-C6 boards work with different pins).
+- An ESP32-C6 board. Packages are provided for the Seeed Studio XIAO ESP32-C6
+  and the Adafruit ESP32-C6 Feather; any other C6 board works with its own pins.
 - Three wires to the controller's COM port.
 - Optional: two 10 kOhm NTC thermistor probes, two 10 kOhm resistors, two
   100 nF capacitors.
@@ -52,31 +56,43 @@ The COM port is on the underside of the controller board. Pins, left to right
 on the PCB: **RX, TX, GND**. 3.3 V logic. Connectors people have used: Molex
 093050-0001, TE 1-2391423-3, or the original Lumberg RAST 2.5 3512 03.
 
-### Wiring, XIAO ESP32-C6
+### Wiring
 
-| Signal | XIAO pin | GPIO |
+| Signal | XIAO ESP32-C6 | Adafruit ESP32-C6 Feather |
 |---|---|---|
-| Controller RX | D6 | GPIO16 |
-| Controller TX | D7 | GPIO17 |
-| Controller GND | GND | |
-| NTC inlet divider | D1 | GPIO1 |
-| NTC outlet divider | D0 | GPIO0 |
-| NTC divider supply | D3 | GPIO21 |
-| Dummy UART pin (leave unconnected) | D10 | GPIO18 |
+| Controller RX | D6 (GPIO16) | TX (GPIO16) |
+| Controller TX | D7 (GPIO17) | RX (GPIO17) |
+| Controller GND | GND | GND |
+| NTC inlet divider | D1 (GPIO1) | A0 (GPIO1) |
+| NTC outlet divider | D0 (GPIO0) | A5 (GPIO2) |
+| NTC divider supply | D3 (GPIO21) | D9 (GPIO7) |
+| Dummy UART pin (leave unconnected) | D10 (GPIO18) | D12 (GPIO14) |
 
-Thermistor divider, one per probe: GPIO21 to a fixed 10 kOhm resistor, then to
-the ADC pin, then through the NTC to GND. Optional 100 nF from the ADC pin to
-GND. The supply pin is switched on only while sampling.
+Thermistor divider, one per probe: the supply pin to a fixed 10 kOhm resistor,
+then to the ADC pin, then through the NTC to GND. Optional 100 nF from the ADC
+pin to GND. The supply pin is switched on only while sampling.
 
-## Install with ESPHome Device Builder
+### Antenna
 
-1. Device Builder, **New Device**, name it, choose **ESP32-C6**, skip the
-   install step.
+The XIAO ESP32-C6 has an onboard ceramic antenna and a u.FL socket, selected by
+an RF switch. **The onboard antenna is the default** and the board package
+leaves it that way. To use the u.FL socket, fit an antenna first, then add
+`packages/xiao-esp32c6-external-antenna.yaml` to the `files:` list. The
+Feather has an onboard antenna only.
+
+## Install with ESPHome Device Builder (from GitHub)
+
+1. Device Builder, **New Device**, name it. When the wizard asks for the
+   hardware, pick your actual board (Seeed Studio XIAO ESP32C6 or Adafruit
+   Feather ESP32-C6) if it is listed; otherwise choose the ESP32-C6 family. The
+   board package sets the exact board anyway, so this only affects the file the
+   wizard generates. Skip the install step.
 2. Open the device's **Edit** view. Copy the generated `api:` and `ota:` blocks
    aside; they hold the device's key and password.
-3. Replace the whole file with
-   [examples/xiao-esp32c6-water-heater.yaml](examples/xiao-esp32c6-water-heater.yaml)
-   and paste your two blocks back over the placeholders.
+3. Replace the whole file with the example for your board and paste your two
+   blocks back over the placeholders:
+   - [examples/xiao-esp32c6-water-heater.yaml](examples/xiao-esp32c6-water-heater.yaml)
+   - [examples/feather-esp32c6-water-heater.yaml](examples/feather-esp32c6-water-heater.yaml)
 4. Remove the `ntc-inlet-outlet.yaml` line if you have no thermistors.
 5. **Install**. The first flash must be over USB (**Plug into this computer**
    in Chrome or Edge); later updates go over the air.
@@ -84,7 +100,40 @@ GND. The supply pin is switched on only while sampling.
    fill in within a few seconds.
 
 The example pulls everything it needs from this repository through ESPHome's
-`packages:` mechanism, so there is nothing else to copy.
+`packages:` mechanism, so there is nothing else to copy. Keep the board package
+last in the `files:` list: ESPHome applies later packages over earlier ones, and
+the board package carries the pin assignments.
+
+## Install from a local copy
+
+Use this when the Home Assistant machine cannot reach GitHub, or to work on the
+files yourself.
+
+1. Download this repository (**Code > Download ZIP** on GitHub) and unzip it.
+2. Copy the whole folder into the ESPHome configuration directory on the Home
+   Assistant machine, so you end up with
+   `/config/esphome/ESPHomeWaterHeaterReader_ESP32C6/` holding `components/`,
+   `packages/` and `examples/`. The Samba, Terminal & SSH or File editor
+   add-ons can all do this; from a terminal it is
+   `scp -r ESPHomeWaterHeaterReader_ESP32C6 root@HA_IP:/config/esphome/`.
+3. In Device Builder create the device as above, then replace its `packages:`
+   block with local includes. For the XIAO:
+
+   ```yaml
+   packages:
+     modbus: !include ESPHomeWaterHeaterReader_ESP32C6/packages/modbus-esp32c6-local.yaml
+     valve: !include ESPHomeWaterHeaterReader_ESP32C6/packages/wv8840c-modbus.yaml
+     ntc: !include ESPHomeWaterHeaterReader_ESP32C6/packages/ntc-inlet-outlet.yaml
+     board: !include ESPHomeWaterHeaterReader_ESP32C6/packages/board-xiao-esp32c6.yaml
+   ```
+
+   For the Feather, swap in `board-adafruit-feather-esp32c6.yaml` and copy its
+   `substitutions:` into the device YAML.
+
+`modbus-esp32c6-local.yaml` is the same as `modbus-esp32c6.yaml` except that it
+loads the `irda_uart` component from the local `components/` folder. If you put
+the folder somewhere other than `/config/esphome/ESPHomeWaterHeaterReader_ESP32C6`,
+edit the `path:` in that file.
 
 ### Changing pins or calibration
 
@@ -102,26 +151,21 @@ substitutions:
   ntc_b: "3950"                   # from the probe datasheet
 ```
 
-### Working on the component locally
+### Working on the component
 
-To test changes to `irda_uart` without pushing to GitHub, copy `components/`
-next to your device YAML and replace the `external_components:` block in
-`packages/modbus-esp32c6.yaml` with:
-
-```yaml
-external_components:
-  - source:
-      type: local
-      path: components
-    components: [ irda_uart ]
-```
+The local install above is also the way to test changes to `irda_uart`: edit
+the files under `components/irda_uart/` and recompile. Changes to the packages
+or the component are picked up on the next build.
 
 ## Using a different ESP32
 
 - **ESP32-C3:** use upstream's `packages/modbus-esp32c3.yaml` and
   `examples/water-heater.yaml`, both kept here unchanged.
-- **Other ESP32-C6 boards:** use `modbus-esp32c6.yaml` and override the pins.
-  Any two free GPIOs work for the UART; the dummy pin just has to be free.
+- **Other ESP32-C6 boards:** use `modbus-esp32c6.yaml` and `ntc-inlet-outlet.yaml`,
+  add your own `esp32:` block with `variant: esp32c6` and `framework: type: esp-idf`,
+  and set the pin substitutions in your device YAML. Any two free GPIOs work
+  for the UART; the dummy pin just has to be free; the NTC pins must be ADC1
+  (GPIO0 to GPIO6 on the C6).
 - **ESP32-H2 / C5:** should take the C6 code path (same register layout), but
   nobody has tried.
 
@@ -144,7 +188,9 @@ Use at your own risk.
 The controller runs on its thermopile and supplies no power to the reader. The
 first build is USB powered. For battery operation the plan is deep sleep with
 a wake every few minutes; a Thread or sub-GHz radio may replace Wi-Fi later.
-Nothing about battery operation is in the packages yet.
+Both boards have a lithium charger on board, and the Feather also carries a
+MAX17048 fuel gauge (not configured yet). Nothing about battery operation is in
+the packages yet.
 
 ## Credits and licence
 

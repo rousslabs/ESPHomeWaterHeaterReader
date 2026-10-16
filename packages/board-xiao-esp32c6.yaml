@@ -1,0 +1,45 @@
+# Board package: Seeed Studio XIAO ESP32-C6
+#
+# Pin assignments used by the other packages. These are the defaults in
+# modbus-esp32c6.yaml and ntc-inlet-outlet.yaml as well; they are repeated here
+# so this file documents the whole board in one place.
+#
+#   Function                     XIAO pin   GPIO
+#   Valve RX (our TX)            D6         GPIO16
+#   Valve TX (our RX)            D7         GPIO17
+#   Dummy UART TX, unconnected   D10        GPIO18
+#   NTC inlet divider            D1         GPIO1   (ADC1)
+#   NTC outlet divider           D0         GPIO0   (ADC1)
+#   NTC divider supply           D3         GPIO21
+#   User LED (active low)        -          GPIO15
+#   RF switch enable (low = on)  -          GPIO3
+#   Antenna select               -          GPIO14  (low = onboard ceramic, high = u.FL)
+#
+# Antenna: the board boots with the onboard ceramic antenna selected and
+# nothing here changes that. To use the u.FL connector, add
+# packages/xiao-esp32c6-external-antenna.yaml.
+#
+# Battery: pads on the underside for a 3.7 V lithium cell, charger on board.
+# Seeed quotes about 15 uA in deep sleep.
+
+substitutions:
+  uart_tx: GPIO16
+  uart_rx: GPIO17
+  uart_dummy_tx: GPIO18
+  ntc_inlet_pin: GPIO1
+  ntc_outlet_pin: GPIO0
+  ntc_power_pin: GPIO21
+
+esp32:
+  board: seeed_xiao_esp32c6
+  variant: esp32c6
+  framework:
+    type: esp-idf
+
+logger:
+  # USB_SERIAL_JTAG by default on the C6, leaving UART0 and UART1 free.
+
+status_led:
+  pin:
+    number: GPIO15
+    inverted: true
