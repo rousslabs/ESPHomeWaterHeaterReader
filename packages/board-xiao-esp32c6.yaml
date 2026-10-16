@@ -43,4 +43,5 @@ logger:
 status_led:
   pin:
     number: GPIO15
+    ignore_strapping_warning: true   # the board wires its LED here; no external pull
     inverted: true

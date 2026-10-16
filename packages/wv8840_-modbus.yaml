@@ -521,7 +521,7 @@ binary_sensor:
   bitmask: 0x2
 - platform: modbus_controller
   modbus_controller_id: modbus_device
-  name: "Potentiometer failure/Memory corruption"
+  name: "Potentiometer failure or memory corruption"
   disabled_by_default: True
   register_type: read
   address: 0x0007
