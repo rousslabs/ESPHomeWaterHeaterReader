@@ -16,7 +16,7 @@ substitutions:
   modbus_id: modbus1
 
 external_components:
-  - source: github://rousslabs/ESPHomeWaterHeaterReader_ESP32C6@main
+  - source: github://rousslabs/ESPHomeWaterHeaterReader@main
     components: [ irda_uart ]
     # Fetched on every build. The refresh: setting on the packages: block in a
     # device YAML does not reach this entry, and a cached copy of the component

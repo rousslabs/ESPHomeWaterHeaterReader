@@ -1,4 +1,4 @@
-# ESPHome Water Heater Reader for the ESP32-C6
+# ESPHome Water Heater Reader
 
 Read a Honeywell / Resideo WV8840_ or WV8860 gas water heater controller into
 Home Assistant with an ESP32-C6 running ESPHome. Optional inlet and outlet pipe
@@ -143,19 +143,19 @@ files yourself.
 1. Download this repository (**Code > Download ZIP** on GitHub) and unzip it.
 2. Copy the whole folder into the ESPHome configuration directory on the Home
    Assistant machine, so you end up with
-   `/config/esphome/ESPHomeWaterHeaterReader_ESP32C6/` holding `components/`,
+   `/config/esphome/ESPHomeWaterHeaterReader/` holding `components/`,
    `packages/` and `examples/`. The Samba, Terminal & SSH or File editor
    add-ons can all do this; from a terminal it is
-   `scp -r ESPHomeWaterHeaterReader_ESP32C6 root@HA_IP:/config/esphome/`.
+   `scp -r ESPHomeWaterHeaterReader root@HA_IP:/config/esphome/`.
 3. In Device Builder create the device as above, then replace its `packages:`
    block with local includes. For the XIAO:
 
    ```yaml
    packages:
-     modbus: !include ESPHomeWaterHeaterReader_ESP32C6/packages/modbus-esp32c6-local.yaml
-     valve: !include ESPHomeWaterHeaterReader_ESP32C6/packages/wv8840_-modbus.yaml
-     ntc: !include ESPHomeWaterHeaterReader_ESP32C6/packages/ntc-inlet-outlet.yaml
-     board: !include ESPHomeWaterHeaterReader_ESP32C6/packages/board-xiao-esp32c6.yaml
+     modbus: !include ESPHomeWaterHeaterReader/packages/modbus-esp32c6-local.yaml
+     valve: !include ESPHomeWaterHeaterReader/packages/wv8840_-modbus.yaml
+     ntc: !include ESPHomeWaterHeaterReader/packages/ntc-inlet-outlet.yaml
+     board: !include ESPHomeWaterHeaterReader/packages/board-xiao-esp32c6.yaml
    ```
 
    For the Feather, swap in `board-adafruit-feather-esp32c6.yaml` and copy its
@@ -163,7 +163,7 @@ files yourself.
 
 `modbus-esp32c6-local.yaml` is the same as `modbus-esp32c6.yaml` except that it
 loads the `irda_uart` component from the local `components/` folder. If you put
-the folder somewhere other than `/config/esphome/ESPHomeWaterHeaterReader_ESP32C6`,
+the folder somewhere other than `/config/esphome/ESPHomeWaterHeaterReader`,
 edit the `path:` in that file.
 
 ### Changing pins or calibration

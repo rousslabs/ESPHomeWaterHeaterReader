@@ -50,7 +50,7 @@ captive_portal:
 
 packages:
   reader:
-    url: https://github.com/rousslabs/ESPHomeWaterHeaterReader_ESP32C6
+    url: https://github.com/rousslabs/ESPHomeWaterHeaterReader
     ref: main
     refresh: 1d
     files:

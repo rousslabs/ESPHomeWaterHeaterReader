@@ -6,7 +6,7 @@
 #
 #   /config/esphome/
 #     water-heater-reader.yaml                  your device YAML
-#     ESPHomeWaterHeaterReader_ESP32C6/         this repository, copied in
+#     ESPHomeWaterHeaterReader/         this repository, copied in
 #       components/irda_uart/...
 #       packages/...
 #
@@ -22,7 +22,7 @@ substitutions:
 external_components:
   - source:
       type: local
-      path: ESPHomeWaterHeaterReader_ESP32C6/components
+      path: ESPHomeWaterHeaterReader/components
     components: [ irda_uart ]
 
 uart:
